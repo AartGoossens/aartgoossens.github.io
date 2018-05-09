@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
         <meta charset="utf-8" />
-        <title>AartGoossens.github.io</title>
+        <title>Comparison of W’balance algorithms</title>
         <link rel="stylesheet" href="/theme/css/main.css" />
         <link href="/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="AartGoossens.github.io Atom Feed" />
 
@@ -15,14 +15,19 @@
         <header id="banner" class="body">
                 <h1><a href="/">AartGoossens.github.io </a></h1>
                 <nav><ul>
-                    <li><a href="/category/misc.html">misc</a></li>
+                    <li class="active"><a href="/category/misc.html">misc</a></li>
                     <li><a href="/category/review.html">Review</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/comparison-of-wbalance-algorithms.html" rel="bookmark"
+           title="Permalink to Comparison of W’balance algorithms">Comparison of W’balance algorithms</a></h1>
+    </header>
 
-            <aside id="featured" class="body">
-                <article>
-                    <h1 class="entry-title"><a href="/comparison-of-wbalance-algorithms.html">Comparison of W’balance algorithms</a></h1>
+    <div class="entry-content">
 <footer class="post-info">
         <abbr class="published" title="2018-03-05T12:00:00+01:00">
                 Published: Mon 05 March 2018
@@ -33,7 +38,7 @@
         </address>
 <p>In <a href="/category/misc.html">misc</a>.</p>
 
-</footer><!-- /.post-info --><h1>Introduction</h1>
+</footer><!-- /.post-info -->      <h1>Introduction</h1>
 <p>In this article a comparison is made of the different W’balance algorithms that are circulating. It is assumed that the reader is familiar with power duration models, the 2-parameter critical power model and the W’balance concept. If you are not familiar with these, Jones et al. (2017)<span class="math">\(^{1}\)</span> is a good primer. If that article is too complicated then this article will probably be too complicated as well, sorry about that… The article is probably not complete and also not intended to judge or validate any of the algorithms. The algorithms that are discussed are the original (integral) Skiba<span class="math">\(^{2}\)</span> algorithm, an optimization (approximation) of the Skiba (integral) algorithm by Dave Waterworth<span class="math">\(^{3}\)</span> and the Froncioni/Skiba/Clarke (differential) algorithm<span class="math">\(^{4}\)</span>. All the algorithms are implemented in the Python library athletic_pandas.</p>
 <h1>Integral algorithm</h1>
 <p>The integral algorithm is the best known algorithm to calculate W’balance and has been scientifically validated<span class="math">\(^{5}\)</span>. The formula’s for the algorithm are:
@@ -149,14 +154,11 @@ Comparison of the integral algorithm with the differential algorithm reveals lar
         "}";
     (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
 }
-</script>                </article>
-            </aside><!-- /#featured -->
-                </ol><!-- /#posts-list -->
-<p class="paginator">
-    Page 1 / 2
-        <a href="/index2.html">&raquo;</a>
-</p>
-                </section><!-- /#content -->
+</script>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
         <section id="extras" class="body">
                 <div class="social">
                         <h2>social</h2>

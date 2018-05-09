@@ -15,46 +15,86 @@
         <header id="banner" class="body">
                 <h1><a href="/">AartGoossens.github.io </a></h1>
                 <nav><ul>
+                    <li><a href="/category/misc.html">misc</a></li>
                     <li><a href="/category/review.html">Review</a></li>
                 </ul></nav>
         </header><!-- /#banner -->
 
             <aside id="featured" class="body">
                 <article>
-                    <h1 class="entry-title"><a href="/my-first-review.html">My First Review</a></h1>
+                    <h1 class="entry-title"><a href="/comparison-of-wbalance-algorithms.html">Comparison of W’balance algorithms</a></h1>
 <footer class="post-info">
-        <abbr class="published" title="2010-12-03T10:20:00+01:00">
-                Published: Fri 03 December 2010
+        <abbr class="published" title="2018-03-05T12:00:00+01:00">
+                Published: Mon 05 March 2018
         </abbr>
 
         <address class="vcard author">
                 By                         <a class="url fn" href="/author/aart-goossens.html">Aart Goossens</a>
         </address>
-<p>In <a href="/category/review.html">Review</a>.</p>
+<p>In <a href="/category/misc.html">misc</a>.</p>
 
-</footer><!-- /.post-info --><div class="math">$$\left| \nabla \phi \right| = 1$$</div>
-<p>
-Test1235.
-Bladiblabla
-Doloremque vero modi sed adipisci non. Soluta qui ipsam voluptas molestias eos. Asperiores laboriosam id amet neque. Voluptatibus exercitationem quo harum veritatis corporis ducimus sapiente nostrum.</p>
-<div class="highlight"><pre><span class="code-line"><span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;The triple-colon syntax will *not* show line numbers.&quot;</span><span class="p">)</span></span>
-</pre></div>
-
-
-<p>Voluptatem ea id eligendi dolorem explicabo rerum delectus enim. Expedita ut vero magni. Dignissimos sequi soluta voluptatem.</p>
+</footer><!-- /.post-info --><h1>Introduction</h1>
+<p>In this article a comparison is made of the different W’balance algorithms that are circulating. It is assumed that the reader is familiar with power duration models, the 2-parameter critical power model and the W’balance concept. If you are not familiar with these, Jones et al. (2017)<span class="math">\(^{1}\)</span> is a good primer. If that article is too complicated then this article will probably be too complicated as well, sorry about that… The article is probably not complete and also not intended to judge or validate any of the algorithms. The algorithms that are discussed are the original (integral) Skiba<span class="math">\(^{2}\)</span> algorithm, an optimization (approximation) of the Skiba (integral) algorithm by Dave Waterworth<span class="math">\(^{3}\)</span> and the Froncioni/Skiba/Clarke (differential) algorithm<span class="math">\(^{4}\)</span>. All the algorithms are implemented in the Python library athletic_pandas.</p>
+<h1>Integral algorithm</h1>
+<p>The integral algorithm is the best known algorithm to calculate W’balance and has been scientifically validated<span class="math">\(^{5}\)</span>. The formula’s for the algorithm are:
+</p>
 <div class="math">$$
-    W'_{bal}(t) = W' - \sum_{u=0}^t W'_{exp}(u) \cdot e^{-\frac{t-u}{\tau_{W'}}}$$</div>
-<div class="math">$$
-    tau_{W'} = 546 \cdot e^{-0.01 \cdot D_{CP}}+316
+    W'_{bal}(t) = W' - \sum_{u=0}^t W'_{exp}(u) \cdot e^{-\frac{t-u}{\tau_{W'}}}
 $$</div>
 <div class="math">$$
-    W'_{exp}(t) = 
+    \tau_{W'} = 546 \cdot e^{-0.01 \cdot D_{CP}}+316
+$$</div>
+<div class="math">$$
+    W'_{exp}(t) =
         \begin{cases}
-            0 &amp; \text{where } P(t) &lt; CP,
-            \newline P(t) - CP &amp; \text{else}
-    \end{cases},
+            0 &amp; \text{where } P(t) &lt; CP \newline
+            P(t) - CP &amp; \text{else}
+        \end{cases}
 $$</div>
-<p>Animi fugit et voluptas in explicabo quae. Ut natus ut expedita et recusandae et et labore. Excepturi tenetur ea aut ullam alias voluptate. Voluptates iste suscipit delectus. Iusto dolores sit esse quae voluptatum quia.</p>
+<p>
+Where <span class="math">\(W′_{bal}(t)\)</span> is equal to <span class="math">\(W′_{bal}\)</span> at time t, W’ is the amount of available energy above CP , t the time for which <span class="math">\(W′_{bal}\)</span> is calculated, u the iterator of the summation, <span class="math">\(W′_{exp(t)}\)</span> amount of energy above CP that is used at time u (expended), e the Euler number and <span class="math">\(\tau_{W′}\)</span> a time constant that describes the recovery speed. The numbers 546, -0.01 and 316 are determined in Skiba’s original article and do not change between persons. <span class="math">\(D_{CP}\)</span> is the difference between CP and the average power of the intervals in which the power was below CP. <span class="math">\(D_{CP}\)</span> can be calculated dynamically (the average until time t) or calculated once for the entire workout and used as a static value. Skiba recommends using a static value for <span class="math">\(D_{CP}\)</span> (citation needed).</p>
+<h1>Waterworth optimization of integral algorithm</h1>
+<p>The original integral algorithm is quite expensive to compute, even on fast computers, since the summation has to be run for every time t again. Mathematician Dave Waterworth helped core developer of GoldenCheetah Mark Liversedge to develop an optimization of the Skiba algorithm<span class="math">\(^{3}\)</span>. This reformulation is an approximation of the Skiba algorithm so results can vary a little in extreme cases, especially when <span class="math">\(\tau_{W′}\)</span> is very low. A comparison of these two algorithms is shown later in this article.
+</p>
+<div class="math">$$
+    S(t) = \sum_0^t W'_{exp}(t) \cdot e^{\frac{t}{\tau_{W'}}}
+$$</div>
+<div class="math">$$
+    W'_{bal}(t) = S(t) \cdot e^\frac{t}{\tau_{W'}}
+$$</div>
+<h1>Differential algorithm</h1>
+<p>The differential algorithm was developed by Skiba et al.<span class="math">\(^{4}\)</span> to cover some of the drawbacks of the original (integral) algorithm, namely he fact that it was developed for cycle-ergometer exercise specifically and that it contained coeffients that have to be estimated. At the same time Andy Froncioni was developing a similar approach. The resulting algorithm is a combined effort of Froncioni and the authors of the the cited article<span class="math">\(^{4}\)</span>. The differential algorithm is the default algorithm for the calculation of W’balance in GoldenCheetah. This algorithm describes a W’balance recovery that is similar to the integral algorithm but where the speed is only dependent on the power under CP (<span class="math">\(D_{CP}\)</span>) and the difference between W’balance and W’ remaining (i.e. slower recovery if W’ is almost completely recovered).
+</p>
+<div class="math">$$
+    W'_{bal}(t) =
+        \sum_0^t (CP - P(t)) \cdot
+        \begin{cases}
+            1 &amp; \text{where } P(t)&gt;CP \newline
+            {\frac{W' - W'_{bal}(t-1)}{W'}} &amp; \text{else}
+        \end{cases}
+$$</div>
+<h1>Comparison</h1>
+<p>As an example I will create a workout for an athlete (CP=300 W, W’=20 kJ) which starts with a warming up of 10 minutes at 100 Watt, followed by 2 times 5 times 1 minute at 400 Watt with 1 minute rest at 100 Watt and 4 minutes rest between the two sets and ending with a cooling down of 10 minutes at 100 Watt. The power is plotted below.
+<img alt="power" src="/images/comparison_w_prime_balance_algorithms_power.png" style="width: 3600px; height: auto; max-width: 100%;"/>
+I will start with comparing the two versions of the integral algorithm. First the plot showing W′bal for both algorithms. This plot shows that the difference between these to algorithms is very small, with the Waterworth plot covering the original plot almost completely.
+<img alt="skiba_waterworth" src="/images/comparison_w_prime_balance_algorithms_skiba_waterworth.png" style="width: 3600px; height: auto; max-width: 100%;"/>
+When the residual plot for these two algorithms is plotted it is obvious that the algorithms are almost identical with the maximum difference equal to 5.46 nanojoule…
+<img alt="residuals" src="/images/comparison_w_prime_balance_algorithms_residuals.png" style="width: 3600px; height: auto; max-width: 100%;"/>
+When the residual plot for these two algorithms is plotted it is obvious that the algorithms are almost identical with the maximum difference equal to 5.46 nanojoule…
+Comparison of the integral algorithm with the differential algorithm reveals large differences between these two algorithms in the plot below. Both the expenditure and the recovery of W′bal are faster for the differential algorithm. The difference in the expenditure is especially striking because one would expect that it is linear and therefore identical for both algorithms. However, the difference can be explained by the fact that the integral algorithm assumes that although there is a netto decrease in W′bal for intervals where P&gt;CP, there is also recovery of previously expended W′ during those intervals.</p>
+<p>The difference in the recovery of W′bal is a consequence of how the recovery is modeled. For the integral algorithm this is done with the term <span class="math">\(e^{-\frac{t-u}{\tau_{W'}}}\)</span> in the equation, where <span class="math">\(\tau_{W'}\)</span> regulates the speed of recovery. My expectation is that for different values of <span class="math">\(\tau_{W'}\)</span> (or different values for the constants numbers 546, -0.01 and 316) the recovery can be changed to similar speed as the differential model. Similarly, the recovery speed in the differential model is regulated by the term <span class="math">\(\frac{W' - W'_{bal}(t-1)}{W'}\)</span> and it is possible to change the recovery speed by multiplying this term by e.g. a factor <span class="math">\(\alpha\)</span>: <span class="math">\(\alpha \cdot \frac{W' - W'_{bal}(t-1)}{W'}\)</span>. Although this goes against one of the main reasons to develop the differential algorithm (to get rid of coefficients that have to be determined), I will try to fit this modified algorithm to the integral algorithm in a later article as a proof of concept.
+<img alt="skiba_froncini" src="/images/comparison_w_prime_balance_algorithms_skiba_froncioni.png" style="width: 3600px; height: auto; max-width: 100%;"/></p>
+<h1>Conclusion</h1>
+<p>From the three algorithms that were compared, there were no differences between the original integral algorithm and the optimization of this algorithm by Waterworth. There were however big differences between both versions of the integral algorithm and the differential algorithm, with the differential algorithm showing faster expenditure and recovery of W’bal. It would be interesting to see if these differences can be minimized by adding a model parameter to the differential algorithm and fitting it to experimental data.</p>
+<p>You can find this article including the Python code to generate the plots here.</p>
+<h1>References</h1>
+<ol>
+<li>Jones, A. M., &amp; Vanhatalo, A. (2017). The ‘Critical Power’Concept: Applications to Sports Performance with a Focus on Intermittent High-Intensity Exercise. Sports Medicine, 47(1), 65–78.</li>
+<li>Skiba, P. F., Chidnok, W., Vanhatalo, A., &amp; Jones, A. M. (2012). Modeling the expenditure and reconstitution of work capacity above critical power. Medicine and science in sports and exercise, 44(8), 1526–1532.</li>
+<li>http://markliversedge.blogspot.nl/2014/10/wbal-optimisation-by-mathematician.html</li>
+<li>Skiba, P. F., Fulford, J., Clarke, D. C., Vanhatalo, A., &amp; Jones, A. M. (2015). Intramuscular determinants of the ability to recover work capacity above critical power. European journal of applied physiology, 115(4), 703–713.</li>
+<li>Skiba, P. F., Jackman, S., Clarke, D., Vanhatalo, A., &amp; Jones, A. M. (2014). Effect of work and recovery durations on W’reconstitution during intermittent exercise. Medicine and science in sports and exercise, 46(7), 1433–1440.</li>
+</ol>
 <script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
     var align = "center",
         indent = "0em",
@@ -111,6 +151,12 @@ $$</div>
 }
 </script>                </article>
             </aside><!-- /#featured -->
+                </ol><!-- /#posts-list -->
+<p class="paginator">
+    Page 1 / 2
+        <a href="/author/aart-goossens2.html">&raquo;</a>
+</p>
+                </section><!-- /#content -->
         <section id="extras" class="body">
                 <div class="social">
                         <h2>social</h2>
